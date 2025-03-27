@@ -21,21 +21,25 @@ var DomSrtings = {
         }
     };
 })();
+
+
 //sanhuutei ajillah controller
 var financeController = (function(){
-
+// private data
     var Income = function(id,description, value){
          this.id = id;
          this.description= description;
          this.value= value;   
  };
+ // private data
     var Expense = function(id,description, value){
          this.id = id;
          this.description= description;
          this.value= value;   
 };
-var date = {
-    allItems : {
+// private data
+var data = {
+    items : {
         inc : [],
         exp : []
     },
@@ -43,17 +47,40 @@ var date = {
         inc : 0,
         exp : 0
     }
-}
+};
+ return{
+    addItem : function(type, desc, val){
+        var item, id;
+        if(data.items[type].length === 0 ) id = 1;
+        else{
+            //hmassiv-iin hamgiin suuliin elementiig oloh
+          id = data.items[type][data.items[type].length - 1].id + 1;  
+        }
+        if(type === "inc"){
+            item = new Income(id, desc,val);
+        } else {
+            //type === exp
+            item = new Expense(id, desc,val);
+        }
+        data.items[type].push(item);
+    },
+
+    seeData :  function (){
+            return data;
+    }
+ };
+
     })();
 
 //Program holbogch controller
-    var appController = (function(uiController, fnController){
+    var appController = (function(uiController, financeController){
         
 var ctrlAddItem = function(){
 //1. oruulah ugugdiin delgetsees olj avna.
-        console.log(uiController.getInput());
-            //2. Olj avsan u
-            // gugdluudeee sanhuugiin controllert damjuulj tend hadgalana.
+var input = uiController.getInput();
+        
+            //2. Olj avsan ugugdluudeee sanhuugiin controllert damjuulj tend hadgalana.
+            financeController.addItem(input.type, input.description, input.value);
             //3. Olj avsan ugugluudee web deeree tohiroh hesegt n gargana.
             //4.Tusviig tootsoolno
             //5.Etssiin uldegdel, tootsoog delgetsend gargana.
