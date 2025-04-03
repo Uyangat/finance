@@ -14,7 +14,7 @@ var uiController = (function() {
     expeseLabel: ".budget__expenses--value",
     percentageLabel: ".budget__expenses--percentage",
     containerDiv: ".container",
-    expensePersentageLabel: ".item__percentage",
+    expensePercentageLabel: ".item__percentage",
     dateLabel : ".budget__title--month"
   };
 
@@ -55,6 +55,8 @@ var uiController = (function() {
 
     return z;
   };
+
+
   return {
     displayDate: function(){
       var unuudur =  new Date();
@@ -88,14 +90,15 @@ var uiController = (function() {
  displayPercentages: function(allPercentages){
   //Zarlagiin NoeList-iig oloh
   var elements = document.querySelectorAll(
-    DOMstrings.expensePersentageLabel
+    DOMstrings.expensePercentageLabel
   );
 
   //Element bolgonii huvid zarlagiin huviig massiv-aaas avch shivj oruulah
-  nodeListForEach(elements, function(el,index){
+  nodeListForeach(elements, function(el, index) {
     el.textContent = allPercentages[index];
   });
- },
+},
+
     getDOMstrings: function() {
       return DOMstrings;
     },
@@ -141,7 +144,7 @@ var uiController = (function() {
       } else {
         list = DOMstrings.expenseList;
         html =
-          '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESCRIPTION$$</div><div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
+        '<div class="item clearfix" id="exp-%id%"><div class="item__description">$$DESCRIPTION$$</div>          <div class="right clearfix"><div class="item__value">$$VALUE$$</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn">                <i class="ion-ios-close-outline"></i></button></div></div></div>';
       }
       // ﾐ｢ﾑ采 HTML ﾐｴﾐｾﾑびﾐｾﾐｾ ﾐｾﾑﾐｻﾐｾﾐｳﾐｾ ﾐｷﾐｰﾑﾐｻﾐｰﾐｳﾑ巾ｽ ﾑτひｳﾑτσｴﾑ巾ｳ REPLACE ﾐｰﾑ威ｸﾐｳﾐｻﾐｰﾐｶ ﾓｩﾓｩﾑﾑ�ｸﾐｻﾐｶ
       html = html.replace("%id%", item.id);
@@ -221,63 +224,66 @@ var financeController = (function() {
         data.huvi = Math.round((data.totals.exp / data.totals.inc) * 100);
       else data.huvi= 0;
     },
-// Huviig tootsooloh 
-    calcualatePercentages : function(){
-      data.items.exp.forEach(function(el){
-        el.calcPercentage(data.totals.inc);
-      });
-    },
 
-getPercentages : function(){
- var allPercentages = data.items.exp.map(function(el){
-  return el.getPercentage();
- });
- return allPercentages;
+// Huviig tootsooloh 
+calculatePercentages: function() {
+  data.items.exp.forEach(function(el) {
+    el.calcPercentage(data.totals.inc);
+  });
 },
 
-    tusviigAvah: function() {
-      return {
-        tusuv: data.tusuv,
-        huvi: data.huvi,
-        totalInc: data.totals.inc,
-        totalExp: data.totals.exp
-      };
-    },
-    deleteItem: function(type, id) {
-      var ids = data.items[type].map(function(el) {
-        return el.id;
-      });
+getPercentages: function() {
+  var allPercentages = data.items.exp.map(function(el) {
+    return el.getPercentage();
+  });
 
-      var index = ids.indexOf(id);
+  return allPercentages;
+},
 
-      if (index !== -1) {
-        data.items[type].splice(index, 1);
-      }
-    },
-
-    addItem: function(type, desc, val) {
-      var item, id;
-
-      if (data.items[type].length === 0) id = 1;
-      else {
-        id = data.items[type][data.items[type].length - 1].id + 1;
-      }
-
-      if (type === "inc") {
-        item = new Income(id, desc, val);
-      } else {
-        item = new Expense(id, desc, val);
-      }
-
-      data.items[type].push(item);
-
-      return item;
-    },
-
-    seeData: function() {
-      return data;
-    }
+tusviigAvah: function() {
+  return {
+    tusuv: data.tusuv,
+    huvi: data.huvi,
+    totalInc: data.totals.inc,
+    totalExp: data.totals.exp
   };
+},
+
+deleteItem: function(type, id) {
+  var ids = data.items[type].map(function(el) {
+    return el.id;
+  });
+
+  var index = ids.indexOf(id);
+
+  if (index !== -1) {
+    data.items[type].splice(index, 1);
+  }
+},
+
+addItem: function(type, desc, val) {
+  var item, id;
+
+  if (data.items[type].length === 0) id = 1;
+  else {
+    id = data.items[type][data.items[type].length - 1].id + 1;
+  }
+
+  if (type === "inc") {
+    item = new Income(id, desc, val);
+  } else {
+    item = new Expense(id, desc, val);
+  }
+
+  data.items[type].push(item);
+
+  return item;
+},
+
+seeData: function() {
+  return data;
+}
+};
 })();
 
 //Program holbogch controller
@@ -312,30 +318,29 @@ var appController = (function (uiController, financeController) {
   uiController.tusviigUzuuleh(tusuv);
 
 //7. Elementuudiin Huviig Tootsoolon 
-      financeController.calcualatePercentages();
+      financeController.calculatePercentages();
 //8. Tootsoolson elementuudiin huviig huleej avna
       var allPercentages = financeController.getPercentages();
 //9. Edgeer huviig delgetsend gargana
-
 uiController.displayPercentages(allPercentages);
-};
+  };
 
-var setupEventListeners = function() {
-  var DOM = uiController.getDOMstrings();
+  var setupEventListeners = function() {
+    var DOM = uiController.getDOMstrings();
 
-  document.querySelector(DOM.addBtn).addEventListener("click", function() {
-    ctrlAddItem();
-  });
-
-  document.addEventListener("keypress", function(event) {
-    if (event.keyCode === 13 || event.which === 13) {
+    document.querySelector(DOM.addBtn).addEventListener("click", function() {
       ctrlAddItem();
-    }
-  });
+    });
 
-  document
-    .querySelector(DOM.inputType)
-    .addEventListener("change", uiController.changeType);
+    document.addEventListener("keypress", function(event) {
+      if (event.keyCode === 13 || event.which === 13) {
+        ctrlAddItem();
+      }
+    });
+
+    document
+      .querySelector(DOM.inputType)
+      .addEventListener("change", uiController.changeType);
 
     document
       .querySelector(DOM.containerDiv)
@@ -356,25 +361,25 @@ var setupEventListeners = function() {
 
         //2 Delgets deerees ene elementiig ustgana
         uiController.deleteListItem(id);
+
         //3 Uldegdel tootsoog shinechilj haruulna
         updateTusuv();
       }
-    })
-  };
-
-  return {
-    init: function() {
-      console.log("Application started...");
-      uiController.displayDate();
-      uiController.tusviigUzuuleh({
-        tusuv: 0,
-        huvi: 0,
-        totalInc: 0,
-        totalExp: 0
-      });
-      setupEventListeners();
-    }
-  };
+    });
+};
+return {
+  init: function() {
+    console.log("Application started...");
+    uiController.displayDate();
+    uiController.tusviigUzuuleh({
+      tusuv: 0,
+      huvi: 0,
+      totalInc: 0,
+      totalExp: 0
+    });
+    setupEventListeners();
+  }
+};
 })(uiController, financeController);
 
 appController.init();
